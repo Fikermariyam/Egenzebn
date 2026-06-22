@@ -1,0 +1,22 @@
+{
+  "name": "e-ገንዘብ",
+  "short_name": "e-Genzeb",
+  "description": "Send, Save, Book, Call, Shop — Your Ethiopian fintech app",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B1A0F",
+  "theme_color": "#22C55E",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
