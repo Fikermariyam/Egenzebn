@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import DrRebira from "./DrRebira";
 
 // ─── DR. REBIRA SYSTEM PROMPT ───
 const DR_REBIRA_PROMPT = `You are Dr. Rebira, a warm and compassionate AI Healthcare Assistant designed for Canadian residents, with particular cultural sensitivity to Ethiopian and African diaspora communities.
@@ -545,6 +546,7 @@ export default function App() {
   const [topupProvider, setTopupProvider] = useState(null);
 
   // ─── DR. REBIRA STATE ───
+  const [healthMode, setHealthMode] = useState("chat");
   const welcomeMsg = {
     role: "assistant",
     content: "Hello! I'm Dr. Rebira, your AI Healthcare Assistant focused on Canadian health guidance.\n\nI can help with symptom triage, understanding lab results, lifestyle coaching, and navigating the Canadian healthcare system.\n\nI'm here to help guide you, but this doesn't replace care from a licensed professional. If your symptoms worsen or you're unsure, it's best to seek medical attention.",
@@ -825,125 +827,125 @@ export default function App() {
           </div>
         )}
 
-        {/* ===== DR. REBIRA — HEALTH CHAT ===== */}
+        {/* ===== DR. REBIRA — HEALTH TAB ===== */}
         {tab === "health" && (
-          <div className="health-screen" key="health">
-
-            {/* HEADER */}
-            <div className="health-hdr">
-              <div className="health-brand">
-                <div className="health-avt">🩺</div>
-                <div className="health-inf">
-                  <h2>Dr. Rebira</h2>
-                  <p>{t.drRebiraDesc}</p>
-                  <div className="health-st">{t.drRebiraOnline}</div>
-                </div>
-                <button
-                  className="ibtn"
-                  style={{marginLeft:"auto",flexShrink:0}}
-                  onClick={() => setShowKeySetup(v => !v)}
-                  title={t.setupTitle}
-                >⚙️</button>
+            <div className="health-screen" key="health">
+              {/* sub-tab toggle */}
+              <div style={{display:"flex",gap:0,borderBottom:"1px solid var(--bdr)",background:"var(--bg2)",flexShrink:0}}>
+                {[["chat","💬 " + (am ? "ቻት" : "Chat")],["os","🩺 " + (am ? "ጤና OS" : "Health OS")]].map(([id,lbl]) => (
+                  <button key={id} onClick={() => setHealthMode(id)} style={{flex:1,border:"none",background:"none",cursor:"pointer",fontFamily:"var(--font)",padding:"9px 0",fontSize:12,fontWeight:600,color:healthMode===id?"var(--teal)":"var(--txtM)",borderBottom:healthMode===id?"2px solid var(--teal)":"2px solid transparent"}}>
+                    {lbl}
+                  </button>
+                ))}
               </div>
 
-              {/* API KEY SETUP PANEL */}
-              {showKeySetup && (
-                <div className="key-setup">
-                  <h4>{t.setupTitle}</h4>
-                  <p>{t.setupSub}</p>
-                  <div className="key-row">
-                    <input
-                      className="key-inp"
-                      type="password"
-                      placeholder={t.apiKeyPlaceholder}
-                      value={keyInput}
-                      onChange={e => setKeyInput(e.target.value)}
-                      onKeyDown={e => e.key === "Enter" && connectKey()}
-                    />
-                    <button className="key-btn" disabled={!keyInput.trim()} onClick={connectKey}>
-                      {t.connect}
-                    </button>
-                  </div>
-                  {drApiKey && <div style={{fontSize:9,color:"var(--teal)",marginTop:5}}>✓ {t.connected}</div>}
-                </div>
-              )}
-
-              {/* EMERGENCY BANNER */}
-              {emergency && (
-                <div className="emerg-banner">
-                  <span style={{fontSize:18,flexShrink:0}}>🚨</span>
-                  <div className="emerg-txt">{t.emergencyDetected}</div>
-                  <div className="emerg-btns">
-                    <a href="tel:911" className="ecbtn r">911</a>
-                    <a href="tel:811" className="ecbtn t">811</a>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* MESSAGES */}
-            <div className="chat-msgs" ref={chatRef}>
-              {/* Suggested prompts shown only alongside the initial greeting */}
-              {healthMsgs.length === 1 && (
-                <div className="sug-wrap">
-                  <div className="sug-lbl">{t.suggested}</div>
-                  {t.suggestions.map(q => (
-                    <button key={q} className="sug-btn" onClick={() => sendHealthMessage(q)}>{q}</button>
-                  ))}
-                </div>
-              )}
-
-              {healthMsgs.map((msg, i) => (
-                <div key={i} className={`msg-row ${msg.role === "user" ? "u" : ""}`}>
-                  <div className={`msg-avt ${msg.role === "user" ? "u" : "dr"}`}>
-                    {msg.role === "user" ? "U" : "🩺"}
-                  </div>
-                  <div>
-                    <div className={`msg-bbl ${msg.role === "user" ? "u" : "dr"}`}>
-                      {msg.content}
+              {/* CHAT MODE */}
+              {healthMode === "chat" && <>
+                {/* HEADER */}
+                <div className="health-hdr">
+                  <div className="health-brand">
+                    <div className="health-avt">🩺</div>
+                    <div className="health-inf">
+                      <h2>Dr. Rebira</h2>
+                      <p>{t.drRebiraDesc}</p>
+                      <div className="health-st">{t.drRebiraOnline}</div>
                     </div>
-                    {msg.time && (
-                      <div className={`msg-time ${msg.role === "user" ? "u" : ""}`}>
-                        {msg.time}
-                      </div>
-                    )}
+                    <button
+                      className="ibtn"
+                      style={{marginLeft:"auto",flexShrink:0}}
+                      onClick={() => setShowKeySetup(v => !v)}
+                      title={t.setupTitle}
+                    >⚙️</button>
                   </div>
-                </div>
-              ))}
 
-              {chatLoading && (
-                <div className="msg-row">
-                  <div className="msg-avt dr">🩺</div>
-                  <div className="msg-bbl dr loading">···</div>
+                  {showKeySetup && (
+                    <div className="key-setup">
+                      <h4>{t.setupTitle}</h4>
+                      <p>{t.setupSub}</p>
+                      <div className="key-row">
+                        <input
+                          className="key-inp"
+                          type="password"
+                          placeholder={t.apiKeyPlaceholder}
+                          value={keyInput}
+                          onChange={e => setKeyInput(e.target.value)}
+                          onKeyDown={e => e.key === "Enter" && connectKey()}
+                        />
+                        <button className="key-btn" disabled={!keyInput.trim()} onClick={connectKey}>
+                          {t.connect}
+                        </button>
+                      </div>
+                      {drApiKey && <div style={{fontSize:9,color:"var(--teal)",marginTop:5}}>✓ {t.connected}</div>}
+                    </div>
+                  )}
+
+                  {emergency && (
+                    <div className="emerg-banner">
+                      <span style={{fontSize:18,flexShrink:0}}>🚨</span>
+                      <div className="emerg-txt">{t.emergencyDetected}</div>
+                      <div className="emerg-btns">
+                        <a href="tel:911" className="ecbtn r">911</a>
+                        <a href="tel:811" className="ecbtn t">811</a>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="chat-msgs" ref={chatRef}>
+                  {healthMsgs.length === 1 && (
+                    <div className="sug-wrap">
+                      <div className="sug-lbl">{t.suggested}</div>
+                      {t.suggestions.map(q => (
+                        <button key={q} className="sug-btn" onClick={() => sendHealthMessage(q)}>{q}</button>
+                      ))}
+                    </div>
+                  )}
+                  {healthMsgs.map((msg, i) => (
+                    <div key={i} className={`msg-row ${msg.role === "user" ? "u" : ""}`}>
+                      <div className={`msg-avt ${msg.role === "user" ? "u" : "dr"}`}>
+                        {msg.role === "user" ? "U" : "🩺"}
+                      </div>
+                      <div>
+                        <div className={`msg-bbl ${msg.role === "user" ? "u" : "dr"}`}>{msg.content}</div>
+                        {msg.time && <div className={`msg-time ${msg.role === "user" ? "u" : ""}`}>{msg.time}</div>}
+                      </div>
+                    </div>
+                  ))}
+                  {chatLoading && (
+                    <div className="msg-row">
+                      <div className="msg-avt dr">🩺</div>
+                      <div className="msg-bbl dr loading">···</div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="chat-bar">
+                  <div className="chat-row">
+                    <textarea
+                      className="chat-ta"
+                      placeholder={t.chatPlaceholder}
+                      value={chatInput}
+                      rows={1}
+                      onChange={e => setChatInput(e.target.value)}
+                      onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendHealthMessage(chatInput); } }}
+                    />
+                    <button className="chat-send" disabled={!chatInput.trim() || chatLoading} onClick={() => sendHealthMessage(chatInput)}>↑</button>
+                  </div>
+                  <div className="chat-disc">{t.disclaimer}</div>
+                </div>
+              </>}
+
+              {/* HEALTH OS MODE */}
+              {healthMode === "os" && (
+                <div style={{flex:1,overflow:"hidden",display:"flex",flexDirection:"column"}}>
+                  <DrRebira
+                    lang={lang}
+                    apiKey={drApiKey}
+                    onRequestKeySetup={() => setShowKeySetup(true)}
+                  />
                 </div>
               )}
             </div>
-
-            {/* INPUT BAR */}
-            <div className="chat-bar">
-              <div className="chat-row">
-                <textarea
-                  className="chat-ta"
-                  placeholder={t.chatPlaceholder}
-                  value={chatInput}
-                  rows={1}
-                  onChange={e => setChatInput(e.target.value)}
-                  onKeyDown={e => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      sendHealthMessage(chatInput);
-                    }
-                  }}
-                />
-                <button
-                  className="chat-send"
-                  disabled={!chatInput.trim() || chatLoading}
-                  onClick={() => sendHealthMessage(chatInput)}
-                >↑</button>
-              </div>
-              <div className="chat-disc">{t.disclaimer}</div>
-            </div>
-          </div>
         )}
 
         {/* ===== MODALS ===== */}
